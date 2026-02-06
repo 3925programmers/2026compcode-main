@@ -1,0 +1,27 @@
+{
+  "location": {
+    "front": 15.3795,
+    "left": -15.3795
+  },
+  "absoluteEncoderOffset": 166.55256,
+  "drive": {
+    "type": "krakenx60",
+    "id": 7,
+    "canbus": "canivore"
+  },
+  "angle": {
+    "type": "krakenx44",
+    "id": 8,
+    "canbus": "canivore"
+  },
+  "encoder": {
+    "type": "cancoder",
+    "id": 12,
+    "canbus": "canivore"
+  },
+  "inverted": {
+    "drive": false,
+    "angle": false
+  },
+  "absoluteEncoderInverted": false
+}
