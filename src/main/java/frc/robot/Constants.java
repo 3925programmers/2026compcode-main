@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -15,9 +17,12 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
-    public static final double DEADBAND = 0.08;
+  public static class NeoMotorConstants {
+    public static final IdleMode IDLE_MODE = IdleMode.kBrake;
+    public static boolean INVERTED = false;
+    public static final int CURRENT_LIMIT = 60;
+    public static final int SWITCH_MOTOR = 1;
+    public static final int SHOOTER_MOTOR = 2;
+    public static final int INTAKE_MOTOR = 3;
   }
-  public static final double maxSpeed = Units.feetToMeters(4.5);
 }

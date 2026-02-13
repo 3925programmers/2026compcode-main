@@ -15,9 +15,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.commands.ShooterTowerCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ShooterTowerSubsystem;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -36,8 +37,26 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    public final ShooterTowerSubsystem shooterTowerSubsystem = new ShooterTowerSubsystem();
+
+    private boolean reverseMotor = false;
+
     public RobotContainer() {
         configureBindings();
+    }
+    
+    private Command spinShooter() {
+        return Commands.runEnd(
+            () -> {
+                shooterTowerSubsystem.rotate(reverseMotor ? -1 : 1);
+            },
+        this::stopShooter,
+        shooterTowerSubsystem
+        );
+    }
+
+    private void stopShooter() {
+        shooterTowerSubsystem.stop();
     }
 
     private void configureBindings() {
@@ -75,6 +94,8 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        joystick.x().toggleOnTrue(spinShooter());
     }
 
     public Command getAutonomousCommand() {
