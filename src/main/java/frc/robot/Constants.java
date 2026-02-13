@@ -17,7 +17,7 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class NeoMotorConstants {
+  public static class ShooterTowerConstants {
     public static final IdleMode IDLE_MODE = IdleMode.kBrake;
     public static boolean INVERTED = false;
     public static final int CURRENT_LIMIT = 60;

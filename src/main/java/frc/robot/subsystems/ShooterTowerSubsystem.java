@@ -4,6 +4,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.ResetMode;
@@ -17,29 +19,46 @@ import frc.robot.Constants;
 import frc.robot.commands.ShooterTowerCommand;
 
 public class ShooterTowerSubsystem extends SubsystemBase implements ShooterTowerCommand {
-  public SparkMax mainMotor = new SparkMax(Constants.NeoMotorConstants.SWITCH_MOTOR, MotorType.kBrushless);
+  public SparkMax switchMotor = new SparkMax(Constants.ShooterTowerConstants.SWITCH_MOTOR, MotorType.kBrushless);
+  public SparkMax intakeMotor = new SparkMax(Constants.ShooterTowerConstants.INTAKE_MOTOR, MotorType.kBrushless);
+  public SparkFlex shooterMotor = new SparkFlex(Constants.ShooterTowerConstants.SHOOTER_MOTOR, MotorType.kBrushless);
   
     public ShooterTowerSubsystem() {
       configs();
     }
   
     public void configs() {
-      SparkMaxConfig rotateConfig = new SparkMaxConfig();
-        rotateConfig.idleMode(Constants.NeoMotorConstants.IDLE_MODE)
-                    .inverted(Constants.NeoMotorConstants.INVERTED)
-                    .smartCurrentLimit(Constants.NeoMotorConstants.CURRENT_LIMIT);
-  
-      mainMotor.configure(rotateConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+      SparkMaxConfig switchConfig = new SparkMaxConfig();
+        switchConfig.idleMode(Constants.ShooterTowerConstants.IDLE_MODE)
+                    .inverted(Constants.ShooterTowerConstants.INVERTED)
+                    .smartCurrentLimit(Constants.ShooterTowerConstants.CURRENT_LIMIT);
+
+      SparkFlexConfig shooterConfig = new SparkFlexConfig();
+        shooterConfig.idleMode(Constants.ShooterTowerConstants.IDLE_MODE)
+                     .inverted(false)
+                     .smartCurrentLimit(Constants.ShooterTowerConstants.CURRENT_LIMIT);
+
+      SparkMaxConfig intakeConfig = new SparkMaxConfig();
+        intakeConfig.idleMode(Constants.ShooterTowerConstants.IDLE_MODE)
+                     .inverted(true)
+                     .smartCurrentLimit(Constants.ShooterTowerConstants.CURRENT_LIMIT);
+      
+      shooterMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+      shooterMotor.configure(shooterConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+      switchMotor.configure(switchConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
   
     public void rotate(int direction) {
-      int invertedSign = Constants.NeoMotorConstants.INVERTED ? -1 : 1;
-      mainMotor.set(0.75 * direction * invertedSign);
-
+      int invertedSign = Constants.ShooterTowerConstants.INVERTED ? -1 : 1;
+      switchMotor.set(0.75 * direction * invertedSign);
+      shooterMotor.set(0.75);
+      intakeMotor.set(0.75);
   }
 
   public void stop() {
-    mainMotor.set(0);
+    switchMotor.set(0);
+    shooterMotor.set(0);
+    intakeMotor.set(0);
   }
 
   // public void toggleInverted() {
