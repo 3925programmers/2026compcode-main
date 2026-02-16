@@ -56,7 +56,13 @@ public class ShooterTowerSubsystem extends SubsystemBase implements ShooterTower
   }
 
   public void rotateSwitchAndShooter(int direction) {
-    switchMotor.set(0.5 * direction);
+    switchMotor.set(0.75 * direction);
+    shooterMotor.set(0.5 * direction);
+    intakeMotor.set(0.5 * direction);
+  }
+
+  public void rotateShooterOnly(int direction) {
+    switchMotor.set(0);
     shooterMotor.set(0.5 * direction);
     intakeMotor.set(0);
   }

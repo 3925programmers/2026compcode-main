@@ -56,12 +56,21 @@ public class RobotContainer {
     }
 
     private Command spinSwitchAndShooterReverse() {
-        return Commands.runEnd(
-            () -> {
-                shooterTowerSubsystem.rotateSwitchAndShooter(-1);
-            },
-            this::stopShooter,
-            shooterTowerSubsystem
+        return Commands.sequence(
+            Commands.runEnd(
+                () -> {
+                    shooterTowerSubsystem.rotateShooterOnly(-1);
+                },
+                this::stopShooter,
+                shooterTowerSubsystem
+            ).withTimeout(2.0),
+            Commands.runEnd(
+                () -> {
+                    shooterTowerSubsystem.rotateSwitchAndShooter(-1);
+                },
+                this::stopShooter,
+                shooterTowerSubsystem
+            )
         );
     }
 
@@ -106,7 +115,7 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         joystick.x().whileTrue(spinShooter());
-        joystick.y().whileTrue(spinSwitchAndShooterReverse());
+        joystick.y().toggleOnTrue(spinSwitchAndShooterReverse());
     }
 
     public Command getAutonomousCommand() {
