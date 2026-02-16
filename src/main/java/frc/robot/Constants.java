@@ -21,8 +21,8 @@ public final class Constants {
     public static final IdleMode IDLE_MODE = IdleMode.kBrake;
     public static boolean INVERTED = false;
     public static final int CURRENT_LIMIT = 60;
-    public static final int SWITCH_MOTOR = 1;
+    public static final int SWITCH_MOTOR = 3;
     public static final int SHOOTER_MOTOR = 2;
-    public static final int INTAKE_MOTOR = 3;
+    public static final int INTAKE_MOTOR = 1;
   }
 }

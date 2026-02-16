@@ -40,19 +40,25 @@ public class ShooterTowerSubsystem extends SubsystemBase implements ShooterTower
 
       SparkMaxConfig intakeConfig = new SparkMaxConfig();
         intakeConfig.idleMode(Constants.ShooterTowerConstants.IDLE_MODE)
-                     .inverted(true)
+                     .inverted(false)
                      .smartCurrentLimit(Constants.ShooterTowerConstants.CURRENT_LIMIT);
       
-      shooterMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+      intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
       shooterMotor.configure(shooterConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
       switchMotor.configure(switchConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
   
-    public void rotate(int direction) {
-      int invertedSign = Constants.ShooterTowerConstants.INVERTED ? -1 : 1;
-      switchMotor.set(0.75 * direction * invertedSign);
-      shooterMotor.set(0.75);
-      intakeMotor.set(0.75);
+  public void rotate(int direction) {
+      switchMotor.set(0.5 * direction);
+      shooterMotor.stopMotor();
+      shooterMotor.setVoltage(0);
+      intakeMotor.set(-0.5 * direction);
+  }
+
+  public void rotateSwitchAndShooter(int direction) {
+    switchMotor.set(0.5 * direction);
+    shooterMotor.set(0.5 * direction);
+    intakeMotor.set(0);
   }
 
   public void stop() {
