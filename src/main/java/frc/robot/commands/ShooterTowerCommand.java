@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 /** An example command that uses an example subsystem. */
 public interface ShooterTowerCommand extends Subsystem {
   void rotate(int direction);
+  void moveActuator(int direction);
+  void stopActuator();
   void stop();
   // void toggleInverted();
 }

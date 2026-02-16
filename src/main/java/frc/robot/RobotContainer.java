@@ -109,8 +109,20 @@ public class RobotContainer {
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        // Actuator: LB down, RB up, stop when released.
+        joystick.leftBumper().whileTrue(Commands.runEnd(
+            () -> shooterTowerSubsystem.moveActuator(-1),
+            shooterTowerSubsystem::stopActuator,
+            shooterTowerSubsystem
+        ));
+        joystick.rightBumper().whileTrue(Commands.runEnd(
+            () -> shooterTowerSubsystem.moveActuator(1),
+            shooterTowerSubsystem::stopActuator,
+            shooterTowerSubsystem
+        ));
+
+        // Reset the field-centric heading on left stick press.
+        joystick.leftStick().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 

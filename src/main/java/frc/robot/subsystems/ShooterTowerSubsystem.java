@@ -11,8 +11,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 // import frc.robot.commands.neoMotor;
@@ -22,9 +21,12 @@ public class ShooterTowerSubsystem extends SubsystemBase implements ShooterTower
   public SparkMax switchMotor = new SparkMax(Constants.ShooterTowerConstants.SWITCH_MOTOR, MotorType.kBrushless);
   public SparkMax intakeMotor = new SparkMax(Constants.ShooterTowerConstants.INTAKE_MOTOR, MotorType.kBrushless);
   public SparkFlex shooterMotor = new SparkFlex(Constants.ShooterTowerConstants.SHOOTER_MOTOR, MotorType.kBrushless);
+  public PWM actuatorMotor = new PWM(Constants.ShooterTowerConstants.ACTUATOR_PWM_PORT);
   
     public ShooterTowerSubsystem() {
       configs();
+      actuatorMotor.setPeriodMultiplier(PWM.PeriodMultiplier.k4X);
+      stopActuator();
     }
   
     public void configs() {
@@ -67,10 +69,21 @@ public class ShooterTowerSubsystem extends SubsystemBase implements ShooterTower
     intakeMotor.set(0);
   }
 
+  public void moveActuator(int direction) {
+    actuatorMotor.setPulseTimeMicroseconds(direction > 0
+        ? Constants.ShooterTowerConstants.ACTUATOR_UP_PULSE_US
+        : Constants.ShooterTowerConstants.ACTUATOR_DOWN_PULSE_US);
+  }
+
+  public void stopActuator() {
+    actuatorMotor.setPulseTimeMicroseconds(Constants.ShooterTowerConstants.ACTUATOR_STOP_PULSE_US);
+  }
+
   public void stop() {
     switchMotor.set(0);
     shooterMotor.set(0);
     intakeMotor.set(0);
+    stopActuator();
   }
 
   // public void toggleInverted() {

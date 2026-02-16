@@ -21,6 +21,10 @@ public final class Constants {
     public static final IdleMode IDLE_MODE = IdleMode.kBrake;
     public static boolean INVERTED = false;
     public static final int CURRENT_LIMIT = 60;
+    public static final int ACTUATOR_PWM_PORT = 9;
+    public static final int ACTUATOR_UP_PULSE_US = 2000;
+    public static final int ACTUATOR_DOWN_PULSE_US = 1000;
+    public static final int ACTUATOR_STOP_PULSE_US = 1500;
     public static final int SWITCH_MOTOR = 3;
     public static final int SHOOTER_MOTOR = 2;
     public static final int INTAKE_MOTOR = 1;
