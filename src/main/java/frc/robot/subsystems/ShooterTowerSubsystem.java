@@ -11,7 +11,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 
-import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 // import frc.robot.commands.neoMotor;
@@ -21,12 +22,13 @@ public class ShooterTowerSubsystem extends SubsystemBase implements ShooterTower
   public SparkMax switchMotor = new SparkMax(Constants.ShooterTowerConstants.SWITCH_MOTOR, MotorType.kBrushless);
   public SparkMax intakeMotor = new SparkMax(Constants.ShooterTowerConstants.INTAKE_MOTOR, MotorType.kBrushless);
   public SparkFlex shooterMotor = new SparkFlex(Constants.ShooterTowerConstants.SHOOTER_MOTOR, MotorType.kBrushless);
-  public PWM actuatorMotor = new PWM(Constants.ShooterTowerConstants.ACTUATOR_PWM_PORT);
+  public Servo actuatorMotor = new Servo(Constants.ShooterTowerConstants.ACTUATOR_PWM_PORT);
+  private double actuatorPosition = Constants.ShooterTowerConstants.ACTUATOR_START_POS;
+  private int actuatorDirection = 0;
   
     public ShooterTowerSubsystem() {
       configs();
-      actuatorMotor.setPeriodMultiplier(PWM.PeriodMultiplier.k4X);
-      stopActuator();
+      actuatorMotor.set(actuatorPosition);
     }
   
     public void configs() {
@@ -70,13 +72,12 @@ public class ShooterTowerSubsystem extends SubsystemBase implements ShooterTower
   }
 
   public void moveActuator(int direction) {
-    actuatorMotor.setPulseTimeMicroseconds(direction > 0
-        ? Constants.ShooterTowerConstants.ACTUATOR_UP_PULSE_US
-        : Constants.ShooterTowerConstants.ACTUATOR_DOWN_PULSE_US);
+    actuatorDirection = Integer.signum(direction);
   }
 
   public void stopActuator() {
-    actuatorMotor.setPulseTimeMicroseconds(Constants.ShooterTowerConstants.ACTUATOR_STOP_PULSE_US);
+    actuatorDirection = 0;
+    actuatorMotor.set(actuatorPosition);
   }
 
   public void stop() {
@@ -92,6 +93,12 @@ public class ShooterTowerSubsystem extends SubsystemBase implements ShooterTower
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    if (actuatorDirection != 0) {
+      actuatorPosition = MathUtil.clamp(
+          actuatorPosition + (Constants.ShooterTowerConstants.ACTUATOR_STEP_PER_LOOP * actuatorDirection),
+          Constants.ShooterTowerConstants.ACTUATOR_MIN_POS,
+          Constants.ShooterTowerConstants.ACTUATOR_MAX_POS);
+    }
+    actuatorMotor.set(actuatorPosition);
   }
 }
