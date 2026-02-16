@@ -63,7 +63,7 @@ public class RobotContainer {
                 },
                 this::stopShooter,
                 shooterTowerSubsystem
-            ).withTimeout(2.0),
+            ).withTimeout(1.0),
             Commands.runEnd(
                 () -> {
                     shooterTowerSubsystem.rotateSwitchAndShooter(-1);
