@@ -26,8 +26,10 @@ public final class Constants {
     public static final double ACTUATOR_MIN_POS = 0.0;
     public static final double ACTUATOR_MAX_POS = 1.0;
     public static final double ACTUATOR_START_POS = 0.5;
-    public static final int SWITCH_MOTOR = 3;
-    public static final int SHOOTER_MOTOR = 2;
     public static final int INTAKE_MOTOR = 1;
+    public static final int SHOOTER_MOTOR = 2;
+    public static final int SWITCH_MOTOR = 3;
+    
+    
   }
 }
