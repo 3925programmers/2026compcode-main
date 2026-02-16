@@ -39,7 +39,7 @@ public class ShooterTowerSubsystem extends SubsystemBase implements ShooterTower
 
       SparkFlexConfig shooterConfig = new SparkFlexConfig();
         shooterConfig.idleMode(Constants.ShooterTowerConstants.IDLE_MODE)
-                     .inverted(false)
+                     .inverted(true)
                      .smartCurrentLimit(Constants.ShooterTowerConstants.CURRENT_LIMIT);
 
       SparkMaxConfig intakeConfig = new SparkMaxConfig();
