@@ -33,6 +33,7 @@ public final class Constants {
 
   public static class ClimberConstants {
     public static final int RIGHT_CLIMB_MOTOR = 5;
+    public static final int LEFT_CLIMB_MOTOR = 4;
     public static final int CURRENT_LIMIT = 60;
     public static final boolean INVERTED = false;
     public static final IdleMode IDLE_MODE = IdleMode.kBrake;

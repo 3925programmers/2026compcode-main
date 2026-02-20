@@ -9,27 +9,35 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.ClimberCommand;
 
 public class ClimberSubsystem extends SubsystemBase implements ClimberCommand {
-  public SparkMax rightClimb = new SparkMax(Constants.ShooterTowerConstants.SWITCH_MOTOR, MotorType.kBrushless);
+  public SparkMax rightClimb = new SparkMax(Constants.ClimberConstants.RIGHT_CLIMB_MOTOR, MotorType.kBrushless);
+  public SparkMax leftClimb = new SparkMax(Constants.ClimberConstants.LEFT_CLIMB_MOTOR, MotorType.kBrushless);
 
-  public ClimberSubsystem() {}
+
+  public ClimberSubsystem() {
+    configs();
+  }
 
   public void configs() {
     SparkMaxConfig rightMotorConfig = new SparkMaxConfig();
       rightMotorConfig.idleMode(Constants.ClimberConstants.IDLE_MODE)
                       .inverted(Constants.ClimberConstants.INVERTED)
                       .smartCurrentLimit(Constants.ClimberConstants.CURRENT_LIMIT);
+
+    SparkMaxConfig leftMotorConfig = new SparkMaxConfig();
+      leftMotorConfig.idleMode(Constants.ClimberConstants.IDLE_MODE)
+                     .smartCurrentLimit(Constants.ClimberConstants.CURRENT_LIMIT)
+                     .follow(Constants.ClimberConstants.RIGHT_CLIMB_MOTOR);
+    leftClimb.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightClimb.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void rotate(int direction) {
-    rightClimb.set(0.1 * direction);
+    rightClimb.set(0.9 * direction);
   }
 
   public void stop() {
