@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ShooterTowerCommand;
 import frc.robot.generated.TunerConstants;
+// import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ShooterTowerSubsystem;
 
@@ -37,7 +38,9 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    //subsystem setup
     public final ShooterTowerSubsystem shooterTowerSubsystem = new ShooterTowerSubsystem();
+    // public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
 
     private boolean reverseMotor = false;
 
@@ -54,6 +57,21 @@ public class RobotContainer {
         shooterTowerSubsystem
         );
     }
+
+    // private Command rotateClimb() {
+    //     return Commands.runEnd(
+    //         () -> {
+    //             climberSubsystem.rotate(1);
+    //         },
+    //     this::stopClimb,
+    //     climberSubsystem
+    //     );
+    // }
+
+    // private void stopClimb() {
+    //     climberSubsystem.stop();
+    // }
+
 
     private Command spinSwitchAndShooterReverse() {
         return Commands.sequence(
@@ -134,6 +152,7 @@ public class RobotContainer {
 
         joystick.x().whileTrue(spinShooter());
         joystick.y().toggleOnTrue(spinSwitchAndShooterReverse());
+        // joystick.rightStick().toggleOnTrue(rotateClimb());
     }
 
     public Command getAutonomousCommand() {

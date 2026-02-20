@@ -19,7 +19,7 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static class ShooterTowerConstants {
     public static final IdleMode IDLE_MODE = IdleMode.kBrake;
-    public static boolean INVERTED = false;
+    public static final boolean INVERTED = false;
     public static final int CURRENT_LIMIT = 60;
     public static final int ACTUATOR_PWM_PORT = 9;
     public static final double ACTUATOR_STEP_PER_LOOP = 0.01;
@@ -29,7 +29,12 @@ public final class Constants {
     public static final int INTAKE_MOTOR = 1;
     public static final int SHOOTER_MOTOR = 2;
     public static final int SWITCH_MOTOR = 3;
-    
-    
+  }
+
+  public static class ClimberConstants {
+    public static final int RIGHT_CLIMB_MOTOR = 5;
+    public static final int CURRENT_LIMIT = 60;
+    public static final boolean INVERTED = false;
+    public static final IdleMode IDLE_MODE = IdleMode.kBrake;
   }
 }
