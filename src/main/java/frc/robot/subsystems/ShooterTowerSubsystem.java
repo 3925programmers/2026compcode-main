@@ -24,7 +24,6 @@ public class ShooterTowerSubsystem extends SubsystemBase implements ShooterTower
   public SparkFlex shooterMotor = new SparkFlex(Constants.ShooterTowerConstants.SHOOTER_MOTOR, MotorType.kBrushless);
   public Servo actuatorMotor = new Servo(Constants.ShooterTowerConstants.ACTUATOR_PWM_PORT);
   private double actuatorPosition = Constants.ShooterTowerConstants.ACTUATOR_START_POS;
-  private int actuatorDirection = 0;
   
     public ShooterTowerSubsystem() {
       configs();
@@ -72,11 +71,30 @@ public class ShooterTowerSubsystem extends SubsystemBase implements ShooterTower
   }
 
   public void moveActuator(int direction) {
-    actuatorDirection = Integer.signum(direction);
+    if (direction > 0) {
+      incrementActuatorPidPoint();
+    } else if (direction < 0) {
+      decrementActuatorPidPoint();
+    }
   }
 
   public void stopActuator() {
-    actuatorDirection = 0;
+    actuatorMotor.set(actuatorPosition);
+  }
+
+  public void incrementActuatorPidPoint() {
+    setActuatorPosition(actuatorPosition + Constants.ShooterTowerConstants.ACTUATOR_PID_INCREMENT);
+  }
+
+  public void decrementActuatorPidPoint() {
+    setActuatorPosition(actuatorPosition - Constants.ShooterTowerConstants.ACTUATOR_PID_INCREMENT);
+  }
+
+  private void setActuatorPosition(double newPosition) {
+    actuatorPosition = MathUtil.clamp(
+        newPosition,
+        Constants.ShooterTowerConstants.ACTUATOR_MIN_POS,
+        Constants.ShooterTowerConstants.ACTUATOR_MAX_POS);
     actuatorMotor.set(actuatorPosition);
   }
 
@@ -93,12 +111,6 @@ public class ShooterTowerSubsystem extends SubsystemBase implements ShooterTower
 
   @Override
   public void periodic() {
-    if (actuatorDirection != 0) {
-      actuatorPosition = MathUtil.clamp(
-          actuatorPosition + (Constants.ShooterTowerConstants.ACTUATOR_STEP_PER_LOOP * actuatorDirection),
-          Constants.ShooterTowerConstants.ACTUATOR_MIN_POS,
-          Constants.ShooterTowerConstants.ACTUATOR_MAX_POS);
-    }
     actuatorMotor.set(actuatorPosition);
   }
 }

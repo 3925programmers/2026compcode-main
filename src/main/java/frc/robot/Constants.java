@@ -22,7 +22,7 @@ public final class Constants {
     public static final boolean INVERTED = false;
     public static final int CURRENT_LIMIT = 60;
     public static final int ACTUATOR_PWM_PORT = 9;
-    public static final double ACTUATOR_STEP_PER_LOOP = 0.01;
+    public static final double ACTUATOR_PID_INCREMENT = 0.05;
     public static final double ACTUATOR_MIN_POS = 0.0;
     public static final double ACTUATOR_MAX_POS = 1.0;
     public static final double ACTUATOR_START_POS = 0.5;
