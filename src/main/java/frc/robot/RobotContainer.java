@@ -8,6 +8,8 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,17 +17,22 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.AutoAlign;
 import frc.robot.commands.ShooterTowerCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ShooterTowerSubsystem;
 
 public class RobotContainer {
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private static final int DELAYED_SPIN_MOTOR_ID = 6;
+    private static final double DELAYED_SPIN_MOTOR_SPEED = -0.25;
+    private static final double DELAYED_SPIN_SECONDS = 1.0;
+
+    public double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    public double MaxAngularRate = RotationsPerSecond.of(0.65).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+    public final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -33,12 +40,15 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+    private final AutoAlign autoAlign = new AutoAlign();
+
+    public final CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     //subsystem setup
     public final ShooterTowerSubsystem shooterTowerSubsystem = new ShooterTowerSubsystem();
+    private final SparkMax delayedSpinMotor = new SparkMax(DELAYED_SPIN_MOTOR_ID, MotorType.kBrushless);
 
     private boolean reverseMotor = false;
 
@@ -59,14 +69,14 @@ public class RobotContainer {
 
 
     private Command spinSwitchAndShooterReverse() {
-        return Commands.sequence(
+        Command shooterCommand = Commands.sequence(
             Commands.runEnd(
                 () -> {
                     shooterTowerSubsystem.rotateShooterOnly(-1);
                 },
                 this::stopShooter,
                 shooterTowerSubsystem
-            ).withTimeout(1.0),
+            ).withTimeout(1.5),
             Commands.runEnd(
                 () -> {
                     shooterTowerSubsystem.rotateSwitchAndShooter(-1);
@@ -75,15 +85,21 @@ public class RobotContainer {
                 shooterTowerSubsystem
             )
         );
+
+        Command delayedMotorStart = Commands.sequence(
+            Commands.waitSeconds(DELAYED_SPIN_SECONDS),
+            Commands.runOnce(() -> delayedSpinMotor.set(DELAYED_SPIN_MOTOR_SPEED))
+        );
+
+        return Commands.parallel(shooterCommand, delayedMotorStart);
     }
 
     private void stopShooter() {
         shooterTowerSubsystem.stop();
+        delayedSpinMotor.set(0);
     }
 
     private void configureBindings() {
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
@@ -93,11 +109,16 @@ public class RobotContainer {
             )
         );
 
+        joystick.a().onTrue(autoAlign);
+
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
+        );
+        RobotModeTriggers.disabled().onTrue(
+            Commands.runOnce(() -> delayedSpinMotor.set(0)).ignoringDisable(true)
         );
 
         // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
@@ -115,13 +136,12 @@ public class RobotContainer {
         // Actuator: LB steps down one PID point, RB steps up one PID point.
         joystick.leftBumper().onTrue(Commands.runOnce(shooterTowerSubsystem::decrementActuatorPidPoint));
         joystick.rightBumper().onTrue(Commands.runOnce(shooterTowerSubsystem::incrementActuatorPidPoint));
-
         // Reset the field-centric heading on left stick press.
-        joystick.leftStick().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.x().whileTrue(spinShooter());
+        joystick.x().toggleOnTrue(spinShooter());
         joystick.y().toggleOnTrue(spinSwitchAndShooterReverse());
     }
 

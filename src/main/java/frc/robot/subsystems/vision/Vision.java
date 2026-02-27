@@ -5,11 +5,11 @@ import java.util.function.BiConsumer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.util.logging.Loggable;
-import frc.lib.util.logging.Logger;
+// import frc.lib.util.logging.Loggable;
+// import frc.lib.util.logging.Logger;
 import frc.robot.subsystems.vision.Limelight.PoseEstimate;
 
-public class Vision extends SubsystemBase implements Loggable{
+public class Vision extends SubsystemBase {
     private final Limelight limelight;
     private final BiConsumer<Pose2d, Double> visionUpdater;
 
@@ -43,11 +43,11 @@ public class Vision extends SubsystemBase implements Loggable{
     }
 
 
-    @Override
-    public void log(String path) {
-        PoseEstimate latestEstimate = getLatestEstimate();
-        Logger.log(path, "Latest Estimate/Pose", latestEstimate.pose());
-        Logger.log(path, "time", Timer.getFPGATimestamp());
-    }
+    // @Override
+    // public void log(String path) {
+    //     PoseEstimate latestEstimate = getLatestEstimate();
+    //     Logger.log(path, "Latest Estimate/Pose", latestEstimate.pose());
+    //     Logger.log(path, "time", Timer.getFPGATimestamp());
+    // }
     
 }

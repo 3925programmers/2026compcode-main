@@ -10,8 +10,8 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.lib.util.logging.Loggable;
-import frc.lib.util.logging.Logger;
+// import frc.lib.util.logging.Loggable;
+// import frc.lib.util.logging.Logger;
 
 /**
  * Wrapper class for limelights. An object of this class doesn't own the underlying hardware. In
@@ -32,7 +32,7 @@ import frc.lib.util.logging.Logger;
  * }
  * </pre>
  */
-public class Limelight implements Loggable {
+public class Limelight {
   private NetworkTable table;
   private String name;
   private boolean enabled = true;
@@ -192,17 +192,17 @@ public class Limelight implements Loggable {
         hasTargets() ? (int) table.getEntry("tid").getInteger(-1) : -1);
   }
 
-  @Override
-  public void log(String path) {
-    Logger.log(path, "MT1 Pose", getPoseMT1().pose());
-    Logger.log(path, "MT2 Pose", getPoseMT2().pose());
-    Logger.log(path, "Target Pose (Robot Space)", getTargetPoseRobotSpace().getFirst());
-    Logger.log(path, "Estimate Seconds", getPoseMT1().latencySeconds);
-    Logger.log(path, "tx", getTX());
-    Logger.log(path, "ty", getTY());
-    Logger.log(path, "ta", getTA());
-    Logger.log(path, "id", getID());
-  }
+  // @Override
+  // public void log(String path) {
+  //   Logger.log(path, "MT1 Pose", getPoseMT1().pose());
+  //   Logger.log(path, "MT2 Pose", getPoseMT2().pose());
+  //   Logger.log(path, "Target Pose (Robot Space)", getTargetPoseRobotSpace().getFirst());
+  //   Logger.log(path, "Estimate Seconds", getPoseMT1().latencySeconds);
+  //   Logger.log(path, "tx", getTX());
+  //   Logger.log(path, "ty", getTY());
+  //   Logger.log(path, "ta", getTA());
+  //   Logger.log(path, "id", getID());
+  // }
 
   /**
    * @return the limelight's name
