@@ -38,13 +38,14 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+    // private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final AutoAlign autoAlign = new AutoAlign();
 
     public final CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private final AutoAlign autoAlign = new AutoAlign(drivetrain, joystick, drive, MaxSpeed, MaxAngularRate);
+
 
     //subsystem setup
     public final ShooterTowerSubsystem shooterTowerSubsystem = new ShooterTowerSubsystem();
@@ -109,8 +110,7 @@ public class RobotContainer {
             )
         );
 
-        joystick.a().onTrue(autoAlign);
-
+        joystick.a().toggleOnTrue(autoAlign);
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
@@ -139,7 +139,7 @@ public class RobotContainer {
         // Reset the field-centric heading on left stick press.
         joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        // drivetrain.registerTelemetry(logger::telemeterize);
 
         joystick.x().toggleOnTrue(spinShooter());
         joystick.y().toggleOnTrue(spinSwitchAndShooterReverse());
