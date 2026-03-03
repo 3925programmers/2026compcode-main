@@ -22,6 +22,7 @@ import frc.robot.commands.ShooterTowerCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ShooterTowerSubsystem;
+import frc.robot.subsystems.vision.Limelight;
 
 public class RobotContainer {
     private static final int DELAYED_SPIN_MOTOR_ID = 6;
@@ -42,9 +43,10 @@ public class RobotContainer {
 
 
     public final CommandXboxController joystick = new CommandXboxController(0);
+    public final Limelight limelight = new Limelight("limelight", 0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    private final AutoAlign autoAlign = new AutoAlign(drivetrain, joystick, drive, MaxSpeed, MaxAngularRate);
+    private final AutoAlign autoAlign = new AutoAlign(drivetrain, limelight, joystick, drive, MaxSpeed, MaxAngularRate);
 
 
     //subsystem setup
@@ -106,11 +108,11 @@ public class RobotContainer {
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                    .withRotationalRate(joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
-        joystick.a().toggleOnTrue(autoAlign);
+        joystick.a().whileTrue(autoAlign);
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
